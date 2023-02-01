@@ -1,48 +1,63 @@
-import throttle from "lodash.throttle";
+import throttle from 'lodash.throttle';
 
-const email = document.getElementsByName('email');
+const LOCALE_KEY = 'feedback-form-state';
+const form = document.querySelector('.feedback-form');
+const email = form[0];
+const textarrea = form[1];
 
+const inputValues = {};
 
+form.addEventListener('input', throttle(onInputText, 500));
+form.addEventListener('submit', onFormSubmit);
 
-// const email = document.querySelector('.feedback-form input');
-// const textarea = document.querySelector('.feedback-form textarea');
+returnSavedValues();
 
-// const STORAGE_KEY = 'feedback-form-state';
+function onInputText(e) {
+  e.preventDefault();
 
-// const formData = {
-//   email: form[0],
-//   texarea: form[1],
-// };
-// console.dir(form[0]);
-// form.addEventListener("submit", onFormSubmit)
+  if (e.target.nodeName === 'INPUT') {
+    let emailValue = e.target.value;
+    inputValues.email = emailValue;
+  } else if (e.target.nodeName === 'TEXTAREA') {
+    let messageValue = e.target.value;
+    inputValues.message = messageValue;
+  }
+  localStorage.setItem(LOCALE_KEY, JSON.stringify(inputValues));
+}
 
-// form.addEventListener('input', throttle(onFormInput, 1000));
+function onFormSubmit(e) {
+  e.preventDefault();
 
+  const savedValues = localStorage.getItem(LOCALE_KEY);
+  const parseValues = JSON.parse(savedValues);
 
+  if (!savedValues) {
+    return;
+  }
+  console.log('Email: ', parseValues.email);
 
-// function onFormSubmit(e) {
-//     e.preventDefault();
-    
-//     e.currentTarget.reset()
-//     localStorage.removeItem(STORAGE_KEY);
-// }
+  if (!savedValues) {
+    return;
+  }
+  console.log('Message: ', parseValues.message);
 
-// function onFormInput(e) {
-//   const message = e.target.value;
-//   localStorage.setItem(STORAGE_KEY, message);
-// }
+  e.currentTarget.reset();
+  localStorage.removeItem(LOCALE_KEY);
+}
 
-// function onTextareaInput(e) {
-//     const message = e.target.value;
-//             localStorage.setItem(STORAGE_KEY, message);
-// }
+function returnSavedValues() {
+  const savedValues = localStorage.getItem(LOCALE_KEY);
+  const parseValues = JSON.parse(savedValues);
 
-// function textareaSavedMessage (){
-//     const messageFromStorage = localStorage.getItem(STORAGE_KEY);
-// if(messageFromStorage) {
-//     console.log(messageFromStorage)
-//     textarea.value = messageFromStorage;
-//     }
-// }
+  if (!savedValues) {
+    return;
+  }
+  textarrea.value = parseValues.message;
 
-// textareaSavedMessage();
+  if (!savedValues) {
+    return;
+  }
+  email.value = parseValues.email;
+
+  // textarrea.value = parseValues.message.textContent;
+}
