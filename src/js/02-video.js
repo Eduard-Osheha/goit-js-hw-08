@@ -2,16 +2,18 @@ import throttle from 'lodash.throttle';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import Player from '@vimeo/player';
-const VIDEOPLAYER_CURRENT_TIME='';
+const LOCAL_KEY = 'videoplayer-current-time';
 
 const iframe = document.querySelector('iframe');
 const localPlayer = new Player(iframe);
 
+
+
 const playerOn = function (data) {
   try {
-    localStorage.setItem('VIDEOPLAYER_CURRENT_TIME', JSON.stringify(data));
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
   } catch (error) {
-    console.error('Error: ', error.message);
+    console.log('Error: ', error.message);
   }
 };
 
@@ -20,12 +22,25 @@ localPlayer.on('timeupdate', throttlePlayerOn);
 
 const CurrentTimePlay = function () {
   try {
-    const getCurrentTime = localStorage.getItem('VIDEOPLAYER_CURRENT_TIME');
-    const parseCurrentTime = JSON.parse(getCurrentTime);
-    return parseCurrentTime.seconds;
+    const getCurrentTime = localStorage.getItem(LOCAL_KEY);
+
+    if (!getCurrentTime) {
+      return;
+    } else {
+      const parseCurrentTime = JSON.parse(getCurrentTime);
+      return parseCurrentTime.seconds
+    };
   } catch (error) {
-    console.error('Error: ', error.message);
+    console.error(`Error: ${error.message}`);
   }
 };
 
-localPlayer.setCurrentTime(CurrentTimePlay());
+
+function checkSavedTime() {
+  const getCurrentTime = localStorage.getItem(LOCAL_KEY);
+    if (getCurrentTime) {
+      localPlayer.setCurrentTime(CurrentTimePlay());
+}
+};
+
+checkSavedTime();
