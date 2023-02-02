@@ -28,36 +28,29 @@ function onInputText(e) {
 function onFormSubmit(e) {
   e.preventDefault();
 
-  const savedValues = localStorage.getItem(LOCALE_KEY);
-  const parseValues = JSON.parse(savedValues);
+  const savedValues = localStorage.getItem(LOCALE_KEY);  
 
   if (!savedValues) {
     return;
-  }
-  console.log('Email: ', parseValues.email);
-
-  if (!savedValues) {
-    return;
-  }
-  console.log('Message: ', parseValues.message);
+  } else {
+    const parseValues = JSON.parse(savedValues);
+   console.log('💛💙💪', parseValues);
+  };
 
   e.currentTarget.reset();
-  localStorage.removeItem(LOCALE_KEY);
-}
+localStorage.removeItem(LOCALE_KEY);
+};
+
+
 
 function returnSavedValues() {
   const savedValues = localStorage.getItem(LOCALE_KEY);
+
+  if (!savedValues) {
+    return;
+  } else {
   const parseValues = JSON.parse(savedValues);
-
-  if (!savedValues) {
-    return;
-  }
   textarrea.value = parseValues.message;
-
-  if (!savedValues) {
-    return;
-  }
   email.value = parseValues.email;
-
-  // textarrea.value = parseValues.message.textContent;
+  };
 }
